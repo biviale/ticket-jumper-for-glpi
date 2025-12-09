@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket Jumper for GLPI</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            width: 350px;
+            padding: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="config-warning" style="display: none; color: #d9534f; margin-bottom: 10px;">
+        <span data-i18n="configureMsg">Please configure the GLPI URL first.</span>
+        <button id="open-options" class="link-button" data-i18n="openOptions">Open Options</button>
+    </div>
+
+    <form id="navigate-form">
+        <div class="toggle-group" id="toggle-container"></div>
+
+        <div class="input-group">
+            <input type="number" id="ticketId" placeholder="Ticket ID" required autofocus min="1">
+            <button type="submit" data-i18n="goButton">Go!</button>
+        </div>
+    </form>
+
+    <script src="i18n.js"></script>
+    <script src="popup.js"></script>
+</body>
+
+</html>

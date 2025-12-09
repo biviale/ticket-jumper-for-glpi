@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Ticket Jumper for GLPI Options</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="options-page">
+  <h1 data-i18n="configTitle">Configuration</h1>
+  <form id="options-form">
+    <label for="language" data-i18n="languageLabel">Language:</label>
+    <select id="language"
+      style="width: 100%; padding: 10px; margin-bottom: 16px; border-radius: 4px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-color);">
+      <option value="auto">Auto (System)</option>
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+    </select>
+
+    <label for="theme" data-i18n="themeLabel">Theme:</label>
+    <select id="theme"
+      style="width: 100%; padding: 10px; margin-bottom: 16px; border-radius: 4px; border: 1px solid var(--input-border); background: var(--input-bg); color: var(--text-color);">
+      <option value="auto" data-i18n="themeAuto">Auto (System)</option>
+      <option value="light" data-i18n="themeLight">Light</option>
+      <option value="dark" data-i18n="themeDark">Dark</option>
+    </select>
+
+    <label for="glpiUrl" data-i18n="glpiUrlLabel">GLPI Base URL:</label>
+    <input type="url" id="glpiUrl" placeholder="https://glpi.yourdomain.com" required>
+
+    <label data-i18n="visibleTypesLabel">Visible Ticket Types:</label>
+    <div style="margin-bottom: 16px;">
+      <label style="display: inline-flex; margin-right: 15px;">
+        <input type="checkbox" id="showTicket" style="margin-right: 5px;"> <span data-i18n="ticket">Ticket</span>
+      </label>
+      <label style="display: inline-flex; margin-right: 15px;">
+        <input type="checkbox" id="showChange" style="margin-right: 5px;"> <span data-i18n="change">Change</span>
+      </label>
+      <label style="display: inline-flex;">
+        <input type="checkbox" id="showProblem" style="margin-right: 5px;"> <span data-i18n="problem">Problem</span>
+      </label>
+    </div>
+
+    <button type="submit" data-i18n="saveButton">Save</button>
+  </form>
+  <div id="status" class="status" data-i18n="optionsSaved">Options saved.</div>
+  <script src="i18n.js"></script>
+  <script src="options.js"></script>
+</body>
+
+</html>

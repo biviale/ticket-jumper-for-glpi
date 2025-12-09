@@ -1,0 +1,16 @@
+{
+  "name": "ticket-jumper-for-glpi",
+  "version": "1.0.0",
+  "description": "Ticket Jumper for GLPI",
+  "scripts": {
+    "test": "jest --coverage",
+    "build": "node build.js"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-chrome": "^0.8.0",
+    "@types/jest": "^29.5.12",
+    "@types/chrome": "^0.0.263"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "appName": {
+    "message": "Ticket Jumper pour GLPI",
+    "description": "The name of the application"
+  },
+  "appDesc": {
+    "message": "Naviguez rapidement vers les tickets ou changements GLPI par ID.",
+    "description": "The description of the application"
+  },
+  "ticket": {
+    "message": "Ticket",
+    "description": "Label for Ticket"
+  },
+  "change": {
+    "message": "Changement",
+    "description": "Label for Change"
+  },
+  "goButton": {
+    "message": "Go !",
+    "description": "Text for the go button"
+  },
+  "openOptions": {
+    "message": "Ouvrir les options",
+    "description": "Button text to open options"
+  },
+  "configureMsg": {
+    "message": "Veuillez d'abord configurer l'URL de GLPI.",
+    "description": "Warning message when URL is not set"
+  },
+  "configTitle": {
+    "message": "Configuration",
+    "description": "Title for the configuration options page"
+  },
+  "saveButton": {
+    "message": "Enregistrer",
+    "description": "Button text to save options"
+  },
+  "optionsSaved": {
+    "message": "Options enregistrées.",
+    "description": "Status message when options are saved"
+  },
+  "languageLabel": {
+    "message": "Langue :",
+    "description": "Label for language selector"
+  },
+  "glpiUrlLabel": {
+    "message": "URL de base GLPI :",
+    "description": "Label for URL input"
+  },
+  "ticketPlaceholder": {
+    "message": "ID Ticket",
+    "description": "Placeholder for ticket input"
+  },
+  "changePlaceholder": {
+    "message": "ID Changement",
+    "description": "Placeholder for change input"
+  },
+  "problem": {
+    "message": "Problème",
+    "description": "Label for Problem"
+  },
+  "problemPlaceholder": {
+    "message": "ID Problème",
+    "description": "Placeholder for problem input"
+  },
+  "visibleTypesLabel": {
+    "message": "Types de tickets visibles :",
+    "description": "Label for the checkbox group in options"
+  },
+  "typeSelectionError": {
+    "message": "Erreur : Sélectionnez au moins un type de ticket.",
+    "description": "Error message when no ticket type is selected"
+  },
+  "contextMenuTitle": {
+    "message": "Ouvrir le ticket GLPI #%s",
+    "description": "Context menu title with placeholder for ID"
+  },
+  "omniboxDesc": {
+    "message": "Ouvrir le ticket GLPI #%s",
+    "description": "Description for the omnibox command"
+  },
+  "themeLabel": {
+    "message": "Thème :",
+    "description": "Label for theme selector"
+  },
+  "themeAuto": {
+    "message": "Auto (Système)",
+    "description": "Option for auto theme"
+  },
+  "themeLight": {
+    "message": "Clair",
+    "description": "Option for light theme"
+  },
+  "themeDark": {
+    "message": "Sombre",
+    "description": "Option for dark theme"
+  }
+}
