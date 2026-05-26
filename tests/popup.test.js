@@ -39,13 +39,8 @@ describe('Popup Script', () => {
     }
 
     test('shows warning if GLPI URL is not configured', async () => {
-        chrome.storage.sync.get.mockImplementation((keys, callback) => {
-            if (Array.isArray(keys) && keys.includes('glpiUrl')) {
-                callback({}); // No URL
-            } else {
-                // Default toggles
-                callback({ showTicket: true, showChange: true, showProblem: true });
-            }
+        chrome.storage.sync.get.mockImplementation((_, callback) => {
+            callback({ glpiUrl: '', theme: 'auto', showTicket: true, showChange: true, showProblem: true });
         });
 
         await loadPopup();
@@ -58,12 +53,8 @@ describe('Popup Script', () => {
     });
 
     test('shows form if GLPI URL is configured', async () => {
-        chrome.storage.sync.get.mockImplementation((keys, callback) => {
-            if (Array.isArray(keys) && keys.includes('glpiUrl')) {
-                callback({ glpiUrl: 'https://glpi.test' });
-            } else {
-                callback({ showTicket: true, showChange: true, showProblem: true });
-            }
+        chrome.storage.sync.get.mockImplementation((_, callback) => {
+            callback({ glpiUrl: 'https://glpi.test', theme: 'auto', showTicket: true, showChange: true, showProblem: true });
         });
 
         await loadPopup();
@@ -74,12 +65,8 @@ describe('Popup Script', () => {
     });
 
     test('initializes toggles based on storage', async () => {
-        chrome.storage.sync.get.mockImplementation((keys, callback) => {
-            if (typeof keys === 'object' && keys.showTicket !== undefined) {
-                callback({ showTicket: true, showChange: false, showProblem: true });
-            } else {
-                callback({ glpiUrl: 'https://glpi.test' });
-            }
+        chrome.storage.sync.get.mockImplementation((_, callback) => {
+            callback({ glpiUrl: 'https://glpi.test', theme: 'auto', showTicket: true, showChange: false, showProblem: true });
         });
 
         await loadPopup();
@@ -93,12 +80,8 @@ describe('Popup Script', () => {
     });
 
     test('submits form and opens tab', async () => {
-        chrome.storage.sync.get.mockImplementation((keys, callback) => {
-            if (Array.isArray(keys) && keys.includes('glpiUrl')) {
-                callback({ glpiUrl: 'https://glpi.test' });
-            } else {
-                callback({ showTicket: true, showChange: true, showProblem: true });
-            }
+        chrome.storage.sync.get.mockImplementation((_, callback) => {
+            callback({ glpiUrl: 'https://glpi.test', theme: 'auto', showTicket: true, showChange: true, showProblem: true });
         });
 
         await loadPopup();

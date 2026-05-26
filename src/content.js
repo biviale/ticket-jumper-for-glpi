@@ -23,7 +23,7 @@ document.addEventListener('selectionchange', debounce(() => {
         type: 'updateContextMenu',
         selectionText: selection,
         show: true
-      }).catch(() => { });
+      }).catch((err) => { console.error('updateContextMenu (show) failed:', err); });
       lastStateWasVisible = true;
     } else {
       // Only send hide message if it was previously visible
@@ -31,11 +31,11 @@ document.addEventListener('selectionchange', debounce(() => {
         chrome.runtime.sendMessage({
           type: 'updateContextMenu',
           show: false
-        }).catch(() => { });
+        }).catch((err) => { console.error('updateContextMenu (hide) failed:', err); });
         lastStateWasVisible = false;
       }
     }
   } catch (e) {
-    // Suppress runtime errors
+    console.error('selectionchange handler error:', e);
   }
 }, 150)); // 150ms delay

@@ -4,3 +4,4 @@ coverage/
 *.log
 dist-firefox/*
 !dist-firefox/manifest.json
+.vscode/

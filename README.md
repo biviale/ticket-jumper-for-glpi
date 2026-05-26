@@ -7,7 +7,8 @@ This project is heavily inspired by the extension [Go2Ticket by Clément](https:
 
 - **Fast Navigation**: Type an ID and hit Enter (or click "Go!") to open the ticket in a new tab.
 - **Multi-Type Support**: fast switch between **Tickets**, **Changes**, and **Problems**.
-- **Smart Context Menu**: Select any number on any webpage, right-click, and choose "Open GLPI ticket #..." to jump straight to it.
+- **Smart Context Menu**: Select any number on any webpage, right-click, and choose "Open GLPI [type] #..." to jump straight to it.
+  - *Dynamic type*: the menu respects your configured visible types (ticket, change, or problem).
   - *Non-intrusive*: The menu item only appears when you select a valid number.
 - **Internationalization**: Localized in **English** and **French**. More languages can be added in the future.
 - **Modern UI**:
@@ -118,4 +119,4 @@ A `.vscode/launch.json` is provided. You can debug tests by:
 
 ## Acknowledgments
 
-- Developed with the assistance of **Gemini 3 Pro**.
+- Developed with the assistance of AI.

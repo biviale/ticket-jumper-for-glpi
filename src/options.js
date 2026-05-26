@@ -1,5 +1,5 @@
 // Saves options to chrome.storage
-const saveOptions = (e) => {
+const saveOptions = (e, getMsg) => {
   e.preventDefault();
   const glpiUrl = document.getElementById('glpiUrl').value;
   const language = document.getElementById('language').value;
@@ -11,7 +11,7 @@ const saveOptions = (e) => {
 
   if (!showTicket && !showChange && !showProblem) {
     const status = document.getElementById('status');
-    status.innerText = I18n.currentMsg ? I18n.currentMsg('typeSelectionError') : "Error: Select at least one ticket type.";
+    status.textContent = getMsg('typeSelectionError');
     status.style.color = "red";
     status.classList.add('show');
     setTimeout(() => {
@@ -24,6 +24,18 @@ const saveOptions = (e) => {
   let formattedUrl = glpiUrl.trim();
   if (formattedUrl.endsWith('/')) {
     formattedUrl = formattedUrl.slice(0, -1);
+  }
+
+  // Validate URL scheme (prevent javascript:, file:, data:, etc.)
+  if (!isSafeUrl(formattedUrl)) {
+    const status = document.getElementById('status');
+    status.textContent = getMsg('invalidUrlError');
+    status.style.color = "red";
+    status.classList.add('show');
+    setTimeout(() => {
+      status.classList.remove('show');
+    }, 2000);
+    return;
   }
 
   chrome.storage.sync.set(
@@ -39,7 +51,7 @@ const saveOptions = (e) => {
       // Update status to let user know options were saved.
       const status = document.getElementById('status');
       status.style.color = '';
-      status.innerText = I18n.currentMsg ? I18n.currentMsg('optionsSaved') : "Options saved.";
+      status.textContent = getMsg('optionsSaved');
       status.classList.add('show');
       setTimeout(() => {
         status.classList.remove('show');
@@ -87,12 +99,10 @@ const restoreOptions = () => {
 
 document.addEventListener('DOMContentLoaded', async () => {
   restoreOptions();
-  // Expose getMsg to global for status update fallback
   const getMsg = await I18n.translatePage();
-  I18n.currentMsg = getMsg;
 
   const form = document.getElementById('options-form');
   if (form) {
-    form.addEventListener('submit', saveOptions);
+    form.addEventListener('submit', (e) => saveOptions(e, getMsg));
   }
 });

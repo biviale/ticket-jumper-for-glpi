@@ -7,32 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const configWarning = document.getElementById('config-warning');
   const openOptionsBtn = document.getElementById('open-options');
 
-  // Check if URL is configured
-  chrome.storage.sync.get(['glpiUrl', 'theme'], (result) => {
-    if (!result.glpiUrl) {
-      configWarning.style.display = 'block';
-      form.style.display = 'none';
-      openOptionsBtn.style.display = 'inline-block'; // Ensure button is shown
-    }
-
-    // Apply theme
-    if (result.theme === 'dark') {
-      document.documentElement.classList.add('theme-dark');
-    } else if (result.theme === 'light') {
-      document.documentElement.classList.add('theme-light');
-    }
-  });
-
-  // Open options page
-  openOptionsBtn.addEventListener('click', () => {
-    if (chrome.runtime.openOptionsPage) {
-      chrome.runtime.openOptionsPage();
-    } else {
-      window.open(chrome.runtime.getURL('options.html'));
-    }
-  });
-
-  // Handle toggle logic
+  // Handle toggle logic (define before storage callback which calls it)
   const toggleContainer = document.getElementById('toggle-container');
 
   const setupToggles = (availableTypes) => {
@@ -95,23 +70,55 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   };
 
-  // Load enabled types from storage
+  // Cache GLPI URL to avoid redundant storage reads on submit
+  let cachedGlpiUrl = '';
+
+  // Load configuration and apply theme + toggles
   chrome.storage.sync.get(
-    { showTicket: true, showChange: true, showProblem: true },
-    (items) => {
+    { glpiUrl: '', theme: 'auto', showTicket: true, showChange: true, showProblem: true },
+    (result) => {
+      cachedGlpiUrl = result.glpiUrl || '';
+
+      if (!result.glpiUrl) {
+        configWarning.style.display = 'block';
+        form.style.display = 'none';
+        openOptionsBtn.style.display = 'inline-block';
+      }
+
+      // Apply theme
+      if (result.theme === 'dark') {
+        document.documentElement.classList.add('theme-dark');
+      } else if (result.theme === 'light') {
+        document.documentElement.classList.add('theme-light');
+      }
+
+      // Setup toggle buttons based on enabled types
       const available = {
-        'ticket': items.showTicket,
-        'change': items.showChange,
-        'problem': items.showProblem
+        'ticket': result.showTicket,
+        'change': result.showChange,
+        'problem': result.showProblem
       };
       setupToggles(available);
     }
   );
 
+  // Open options page
+  openOptionsBtn.addEventListener('click', () => {
+    if (chrome.runtime.openOptionsPage) {
+      chrome.runtime.openOptionsPage();
+    } else {
+      window.open(chrome.runtime.getURL('options.html'));
+    }
+  });
+
   // Handle form submission
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const ticketId = ticketIdInput.value;
+
+    // Validate ticket ID (same regex as background.js context menu)
+    const trimmedId = ticketId.trim();
+    if (!/^\d+$/.test(trimmedId) || parseInt(trimmedId, 10) < 1) return;
 
     // Get selected type (safely)
     const selectedInput = form.querySelector('input[name="type"]:checked');
@@ -119,20 +126,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const type = selectedInput.value;
 
-    chrome.storage.sync.get(['glpiUrl'], (result) => {
-      if (result.glpiUrl) {
-        let targetUrl = `${result.glpiUrl}/front/${type}.form.php?id=${ticketId}`;
-
-        if (targetUrl) {
-          chrome.tabs.create({ url: targetUrl });
-          window.close();
-        }
-      } else {
-        // Should not happen if we hid the form, but just in case
+    // Use cached URL instead of another storage call
+    if (cachedGlpiUrl) {
+      // Validate URL scheme before navigation
+      if (!isSafeUrl(cachedGlpiUrl)) {
         configWarning.style.display = 'block';
         form.style.display = 'none';
+        return;
       }
-    });
+
+      const targetUrl = `${cachedGlpiUrl}/front/${type}.form.php?id=${trimmedId}`;
+      chrome.tabs.create({ url: targetUrl });
+      window.close();
+    } else {
+      // Should not happen if we hid the form, but just in case
+      configWarning.style.display = 'block';
+      form.style.display = 'none';
+    }
   });
 });
 

@@ -75,7 +75,7 @@ describe('I18n', () => {
 
         const getMsg = await I18n.translatePage();
 
-        expect(document.querySelector('div').innerText).toBe('Hello World');
+        expect(document.querySelector('div').textContent).toBe('Hello World');
         expect(document.querySelector('input').value).toBe('Go');
         expect(getMsg('hello')).toBe('Hello World');
     });

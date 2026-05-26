@@ -75,10 +75,6 @@
     "message": "Open GLPI ticket #%s",
     "description": "Context menu title with placeholder for ID"
   },
-  "omniboxDesc": {
-    "message": "Open GLPI Ticket #%s",
-    "description": "Description for the omnibox command"
-  },
   "themeLabel": {
     "message": "Theme:",
     "description": "Label for theme selector"
@@ -94,5 +90,9 @@
   "themeDark": {
     "message": "Dark",
     "description": "Option for dark theme"
+  },
+  "invalidUrlError": {
+    "message": "Invalid URL: only http:// and https:// are accepted.",
+    "description": "Error message when the GLPI URL has an invalid scheme"
   }
 }

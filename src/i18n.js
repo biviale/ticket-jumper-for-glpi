@@ -63,10 +63,10 @@ const I18n = {
         if (msg) {
           if (el.tagName === 'INPUT' && el.type === 'submit') {
             el.value = msg;
-          } else if (el.tagName === 'INPUT' && el.placeholder) {
-            // checking if it's meant for placeholder not implemented here generally
+          } else if (el.tagName === 'INPUT' && el.placeholder !== undefined) {
+            el.placeholder = msg;
           } else {
-            el.innerText = msg;
+            el.textContent = msg;
           }
         }
       });

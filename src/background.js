@@ -22,11 +22,21 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   if (info.menuItemId === "open-glpi-ticket") {
     const ticketId = info.selectionText.trim();
     if (/^\d+$/.test(ticketId)) {
-      chrome.storage.sync.get(['glpiUrl'], (result) => {
-        if (result.glpiUrl) {
-          // Default to ticket type for context menu actions
-          const targetUrl = `${result.glpiUrl}/front/ticket.form.php?id=${ticketId}`;
-          chrome.tabs.create({ url: targetUrl });
+      chrome.storage.sync.get(
+        { glpiUrl: '', showTicket: true, showChange: true, showProblem: true },
+        (result) => {
+          if (result.glpiUrl) {
+            // Validate URL scheme before navigation
+            if (!isSafeUrl(result.glpiUrl)) {
+              chrome.runtime.openOptionsPage();
+              return;
+            }
+            // Pick the first enabled type (ordered: ticket, change, problem)
+            const type = result.showTicket ? 'ticket' :
+                         result.showChange ? 'change' :
+                         result.showProblem ? 'problem' : 'ticket';
+            const targetUrl = `${result.glpiUrl}/front/${type}.form.php?id=${ticketId}`;
+            chrome.tabs.create({ url: targetUrl });
         } else {
           chrome.runtime.openOptionsPage();
         }
@@ -69,14 +79,19 @@ chrome.omnibox.onInputEntered.addListener((text, disposition) => {
       return;
     }
 
-    let type = 'ticket';
-    const lowerText = text.toLowerCase();
-
-    if (lowerText.includes('change') || lowerText.startsWith('c ')) {
-      type = 'change';
-    } else if (lowerText.includes('problem') || lowerText.startsWith('p ')) {
-      type = 'problem';
+    // Validate URL scheme before navigation
+    if (!isSafeUrl(result.glpiUrl)) {
+      chrome.runtime.openOptionsPage();
+      return;
     }
+
+    const lowerText = text.toLowerCase();
+    const typeMap = [
+      { type: 'change',  match: t => t.startsWith('change ') || t.startsWith('c ') },
+      { type: 'problem', match: t => t.startsWith('problem ') || t.startsWith('p ') },
+    ];
+    const matchEntry = typeMap.find(({ match }) => match(lowerText));
+    const type = matchEntry?.type ?? 'ticket';
 
     const idMatch = text.match(/\d+/);
     if (idMatch) {
