@@ -14,7 +14,8 @@ document.addEventListener('selectionchange', debounce(() => {
     // Check if extension context is still valid
     if (!chrome.runtime?.id) return;
 
-    const selection = window.getSelection().toString().trim();
+    const selectionObj = window.getSelection();
+    const selection = selectionObj ? selectionObj.toString().trim() : '';
     const numericRegex = /^\d+$/;
 
     if (selection && numericRegex.test(selection)) {

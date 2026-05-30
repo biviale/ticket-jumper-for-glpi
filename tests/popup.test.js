@@ -9,6 +9,11 @@ describe('Popup Script', () => {
     beforeEach(() => {
         jest.resetModules();
 
+        // Mock window.close to prevent jsdom from destroying the document object
+        // (window.close() is spec-conformant in jsdom and kills the window
+        // for the entire test suite)
+        window.close = jest.fn();
+
         // Reset DOM
         document.documentElement.innerHTML = popupHtmlCode;
 
@@ -79,7 +84,7 @@ describe('Popup Script', () => {
         expect(labels[1].id).toBe('label-problem');
     });
 
-    test('submits form and opens tab', async () => {
+    test('submits form, opens tab, and closes popup', async () => {
         chrome.storage.sync.get.mockImplementation((_, callback) => {
             callback({ glpiUrl: 'https://glpi.test', theme: 'auto', showTicket: true, showChange: true, showProblem: true });
         });
@@ -96,6 +101,34 @@ describe('Popup Script', () => {
 
         expect(chrome.tabs.create).toHaveBeenCalledWith({
             url: 'https://glpi.test/front/ticket.form.php?id=12345'
+        });
+        expect(window.close).toHaveBeenCalled();
+    });
+
+    describe('ticket ID validation', () => {
+        beforeEach(() => {
+            // Shared storage mock for all validation tests
+            chrome.storage.sync.get.mockImplementation((_, callback) => {
+                callback({ glpiUrl: 'https://glpi.test', theme: 'auto', showTicket: true, showChange: true, showProblem: true });
+            });
+        });
+
+        test.each([
+            ['', 'empty string'],
+            ['0', 'zero'],
+            ['-1', 'negative'],
+            ['abc', 'non-numeric'],
+            ['12.5', 'decimal'],
+        ])('rejects invalid ticket ID: %s (%s)', async (value) => {
+            await loadPopup();
+
+            const input = document.getElementById('ticketId');
+            input.value = value;
+
+            const form = document.getElementById('navigate-form');
+            form.dispatchEvent(new Event('submit'));
+
+            expect(chrome.tabs.create).not.toHaveBeenCalled();
         });
     });
 });

@@ -1,4 +1,31 @@
-// Create context menu on install
+// Unique ID for the dynamically registered content script
+const CONTENT_SCRIPT_ID = 'ticket-jumper-content';
+
+/**
+ * Registers or updates the content script for the configured GLPI URL.
+ * If no URL is configured or the URL is unsafe, unregisters any existing script.
+ */
+function registerContentScript(glpiUrl) {
+  const validUrl = glpiUrl && isSafeUrl(glpiUrl);
+  const matches = validUrl ? [`${glpiUrl}/*`] : [];
+
+  chrome.scripting.unregisterContentScripts({ ids: [CONTENT_SCRIPT_ID] })
+    .catch(() => { /* Ignore if not registered */ })
+    .finally(() => {
+      if (matches.length > 0) {
+        chrome.scripting.registerContentScripts([{
+          id: CONTENT_SCRIPT_ID,
+          matches: matches,
+          js: ['content.js'],
+          runAt: 'document_idle'
+        }]).catch((err) => {
+          console.error('Failed to register content script:', err);
+        });
+      }
+    });
+}
+
+// Register content script on startup / install
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     id: "open-glpi-ticket",
@@ -6,6 +33,25 @@ chrome.runtime.onInstalled.addListener(() => {
     contexts: ["selection"],
     visible: false
   });
+
+  // Register content script for the saved GLPI URL (if any)
+  chrome.storage.sync.get({ glpiUrl: '' }, (result) => {
+    registerContentScript(result.glpiUrl);
+  });
+});
+
+// Re-register content script when GLPI URL changes
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName === 'sync' && changes.glpiUrl) {
+    registerContentScript(changes.glpiUrl.newValue);
+  }
+});
+
+// Also register on every service worker startup (not just install/update).
+// onInstalled only fires on install/update — if the service worker is
+// terminated and restarted, content script registrations may be lost.
+chrome.storage.sync.get({ glpiUrl: '' }, (result) => {
+  registerContentScript(result.glpiUrl);
 });
 
 // Stateless handling of context menu updates
@@ -24,8 +70,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     if (/^\d+$/.test(ticketId)) {
       chrome.storage.sync.get(
         { glpiUrl: '', showTicket: true, showChange: true, showProblem: true },
-        (result) => {
-          if (result.glpiUrl) {
+        (result) => {          if (result.glpiUrl) {
             // Validate URL scheme before navigation
             if (!isSafeUrl(result.glpiUrl)) {
               chrome.runtime.openOptionsPage();
@@ -37,9 +82,9 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
                          result.showProblem ? 'problem' : 'ticket';
             const targetUrl = `${result.glpiUrl}/front/${type}.form.php?id=${ticketId}`;
             chrome.tabs.create({ url: targetUrl });
-        } else {
-          chrome.runtime.openOptionsPage();
-        }
+          } else {
+            chrome.runtime.openOptionsPage();
+          }
       });
     }
   }

@@ -219,7 +219,7 @@ describe('Content Script', () => {
             expect(chrome.runtime.sendMessage).not.toHaveBeenCalled();
         });
 
-        test('logs error on sendMessage rejection', () => {
+        test('logs error on sendMessage rejection', async () => {
             const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
             chrome.runtime.sendMessage.mockRejectedValue(new Error('Extension context invalidated'));
 
@@ -232,13 +232,15 @@ describe('Content Script', () => {
 
             fireSelectionChange();
 
-            return Promise.resolve().then(() => Promise.resolve()).then(() => {
-                expect(consoleSpy).toHaveBeenCalledWith(
-                    'updateContextMenu (show) failed:',
-                    expect.any(Error)
-                );
-                consoleSpy.mockRestore();
-            });
+            // Wait for microtask queue to flush
+            await Promise.resolve();
+            await Promise.resolve();
+
+            expect(consoleSpy).toHaveBeenCalledWith(
+                'updateContextMenu (show) failed:',
+                expect.any(Error)
+            );
+            consoleSpy.mockRestore();
         });
 
         test('catches synchronous errors in handler', () => {

@@ -1,3 +1,5 @@
+// Requires utils.js to be loaded first (provides isSafeUrl)
+
 // Saves options to chrome.storage
 const saveOptions = (e, getMsg) => {
   e.preventDefault();

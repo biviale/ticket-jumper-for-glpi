@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Label Text
         const span = document.createElement('span');
-        span.innerText = getMsg(config.labelI18n);
+        span.textContent = getMsg(config.labelI18n);
 
         label.appendChild(input);
         label.appendChild(span);
@@ -70,7 +70,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   };
 
-  // Cache GLPI URL to avoid redundant storage reads on submit
+  // Requires utils.js to be loaded first (provides isSafeUrl)
+
+// Cache GLPI URL to avoid redundant storage reads on submit
   let cachedGlpiUrl = '';
 
   // Load configuration and apply theme + toggles
