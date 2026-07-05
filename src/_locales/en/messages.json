@@ -4,7 +4,7 @@
     "description": "The name of the application"
   },
   "appDesc": {
-    "message": "Quickly navigate to GLPI tickets or changes by ID.",
+    "message": "Quickly navigate to GLPI tickets, changes or problems by ID.",
     "description": "The description of the application"
   },
   "ticket": {
