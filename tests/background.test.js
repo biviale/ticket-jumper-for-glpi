@@ -56,7 +56,8 @@ describe('Background Script', () => {
             expect.objectContaining({
                 visible: true,
                 title: 'Open Ticket 123'
-            })
+            }),
+            expect.any(Function)
         );
     });
 
@@ -70,7 +71,8 @@ describe('Background Script', () => {
             'open-glpi-ticket',
             expect.objectContaining({
                 visible: false
-            })
+            }),
+            expect.any(Function)
         );
     });
 
@@ -209,7 +211,7 @@ describe('Background Script', () => {
             });
             expect(chrome.scripting.registerContentScripts).toHaveBeenCalledWith([{
                 id: 'ticket-jumper-content',
-                matches: ['https://glpi.example.com/*'],
+                matches: ['<all_urls>'],
                 js: ['content.js'],
                 runAt: 'document_idle'
             }]);
@@ -276,7 +278,7 @@ describe('Background Script', () => {
             });
             expect(chrome.scripting.registerContentScripts).toHaveBeenCalledWith([{
                 id: 'ticket-jumper-content',
-                matches: ['https://new-glpi.example.com/*'],
+                matches: ['<all_urls>'],
                 js: ['content.js'],
                 runAt: 'document_idle'
             }]);

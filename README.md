@@ -1,6 +1,9 @@
 # Ticket Jumper for GLPI
 
 **Ticket Jumper** is a lightweight browser extension compatible with Chromium (Chrome, Edge, Brave) and Firefox. It allows you to instantly navigate to GLPI tickets, changes, or problems by their ID without navigating through menus.
+
+![Title](.github/readme/title.png)
+
 This project is heavily inspired by the extension [Go2Ticket by Clément](https://addons.mozilla.org/en-US/firefox/addon/go2ticket/). Since that extension was not updated to Manifest V3 and can no longer be used in Google Chrome, I decided to create a new one with a few additional features I thought would be useful.
 
 ## Features

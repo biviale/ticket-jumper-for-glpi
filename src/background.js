@@ -7,7 +7,7 @@ const CONTENT_SCRIPT_ID = 'ticket-jumper-content';
  */
 function registerContentScript(glpiUrl) {
   const validUrl = glpiUrl && isSafeUrl(glpiUrl);
-  const matches = validUrl ? [`${glpiUrl}/*`] : [];
+  const matches = validUrl ? ['<all_urls>'] : [];
 
   chrome.scripting.unregisterContentScripts({ ids: [CONTENT_SCRIPT_ID] })
     .catch(() => { /* Ignore if not registered */ })
@@ -27,11 +27,13 @@ function registerContentScript(glpiUrl) {
 
 // Register content script on startup / install
 chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
-    id: "open-glpi-ticket",
-    title: "Open GLPI Ticket",
-    contexts: ["selection"],
-    visible: false
+  chrome.contextMenus.removeAll(() => {
+    chrome.contextMenus.create({
+      id: "open-glpi-ticket",
+      title: "Open GLPI Ticket",
+      contexts: ["selection"],
+      visible: false
+    });
   });
 
   // Register content script for the saved GLPI URL (if any)
@@ -60,6 +62,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.contextMenus.update("open-glpi-ticket", {
       visible: message.show,
       title: message.show ? chrome.i18n.getMessage("contextMenuTitle", [message.selectionText]) : undefined
+    }, () => {
+      if (chrome.runtime.lastError) {
+        console.error('Context menu update failed:', chrome.runtime.lastError);
+      }
     });
   }
 });

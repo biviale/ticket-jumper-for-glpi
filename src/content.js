@@ -1,3 +1,5 @@
+const SELECTION_DEBOUNCE_MS = 150;
+
 // Debounce utility to prevent high CPU usage on every character selection
 function debounce(func, wait) {
   let timeout;
@@ -39,4 +41,22 @@ document.addEventListener('selectionchange', debounce(() => {
   } catch (e) {
     console.error('selectionchange handler error:', e);
   }
-}, 150)); // 150ms delay
+}, SELECTION_DEBOUNCE_MS));
+
+// Fallback: also check on contextmenu event in case selectionchange missed it
+document.addEventListener('contextmenu', () => {
+  try {
+    if (!chrome.runtime?.id) return;
+    const selection = window.getSelection();
+    const text = selection ? selection.toString().trim() : '';
+    if (text && /^\d+$/.test(text)) {
+      chrome.runtime.sendMessage({
+        type: 'updateContextMenu',
+        selectionText: text,
+        show: true
+      }).catch((err) => { console.error('contextmenu fallback failed:', err); });
+    }
+  } catch (e) {
+    console.error('contextmenu fallback error:', e);
+  }
+});
